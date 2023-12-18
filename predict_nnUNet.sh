@@ -46,3 +46,5 @@ for number in {0..14}; do
     python3 processResults.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
 
 done
+
+python3 combineFolds.py -r $ROOT_DIR -v "Age"
