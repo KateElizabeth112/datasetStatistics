@@ -15,7 +15,7 @@ python -c "import torch;print(torch.cuda.is_available())"
 # Set environment variables
 ROOT_DIR='/rds/general/user/kc2322/home/data/AMOS_3D/'
 
-dataset="AMOS"
+DATASET="AMOS"
 experiments=("Dataset500_Age0" "Dataset501_Age0" "Dataset502_Age0"
              "Dataset600_Age1" "Dataset601_Age1" "Dataset602_Age1"
              "Dataset700_Age2" "Dataset701_Age2" "Dataset702_Age2"
@@ -26,7 +26,7 @@ export nnUNet_raw=$ROOT_DIR"nnUNet_raw"
 export nnUNet_preprocessed=$ROOT_DIR"nnUNet_preprocessed"
 export nnUNet_results=$ROOT_DIR"nnUNet_results"
 
-for number in {0..2}; do
+for number in {0..14}; do
     EXPERIMENT=${experiments[number]}
     TASK=${EXPERIMENT:7:3}
 
@@ -36,6 +36,7 @@ for number in {0..2}; do
 
     echo $TASK
     echo $DATASET
+    echo $EXPERIMENT
     echo $INPUT_FOLDER
     echo $OUTPUT_FOLDER
 

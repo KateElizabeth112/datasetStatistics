@@ -9,8 +9,8 @@ import argparse
 
 # argparse
 parser = argparse.ArgumentParser(description="Just an example",  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("-d", "--dataset", default="Dataset303_Set3", help="Task to evaluate")
-parser.add_argument("-e", "--experiment", default="AMOS", help="dataset")
+parser.add_argument("-d", "--dataset", default="AMOS", help="Task to evaluate")
+parser.add_argument("-e", "--experiment", default="Dataset303_Set3", help="dataset")
 parser.add_argument("-r", "--rootdir", default="/rds/general/user/kc2322/home/data/AMOS_3D", help="full path to root directory")
 args = vars(parser.parse_args())
 
