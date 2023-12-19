@@ -30,6 +30,7 @@ def main():
         sex_all = []
         age_all = []
         dice_all = []
+        hd95_all = []
         hd_all = []
         vol_pred_all = []
         vol_gt_all = []
@@ -48,6 +49,7 @@ def main():
             age_all.append(list(results["age"]))
             dice_all.append(list(results["dice"]))
             hd_all.append(results["hd"])
+            hd95_all.append(results["hd95"])
             vol_pred_all.append(list(results["vol_pred"]))
             vol_gt_all.append(list(results["vol_gt"]))
 
@@ -58,7 +60,8 @@ def main():
                   "sex": np.array(sex_all),
                   "age": np.array(age_all),
                   "dice": np.array(dice_all),
-                  "hd": hd_all,
+                  "hd": np.array(hd_all),
+                  "hd95": np.array(hd95_all),
                   "vol_pred": np.array(vol_pred_all),
                   "vol_gt": np.array(vol_gt_all),
                   }, f)
