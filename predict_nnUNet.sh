@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=5:00:00
+#PBS -l walltime=30:00:00
 #PBS -l select=1:ncpus=15:mem=120gb:ngpus=1:gpu_type=RTX6000
 #PBS -N predict_TS_age
 
@@ -17,11 +17,11 @@ python -c "import torch;print(torch.cuda.is_available())"
 ROOT_DIR='/rds/general/user/kc2322/projects/cevora_phd/live/TotalSegmentator/'
 
 DATASET="TotalSegmentator"
-experiments=("Dataset500_Age0" "Dataset501_Age0" "Dataset502_Age0")
-#             "Dataset600_Age1" "Dataset601_Age1" "Dataset602_Age1"
-#             "Dataset700_Age2" "Dataset701_Age2" "Dataset702_Age2"
-#             "Dataset800_Age3" "Dataset801_Age3" "Dataset802_Age3"
-#             "Dataset900_Age4" "Dataset901_Age4" "Dataset902_Age4")
+experiments=("Dataset500_Age0" "Dataset501_Age0" "Dataset502_Age0"
+             "Dataset600_Age1" "Dataset601_Age1" "Dataset602_Age1"
+             "Dataset700_Age2" "Dataset701_Age2" "Dataset702_Age2"
+             "Dataset800_Age3" "Dataset801_Age3" "Dataset802_Age3"
+             "Dataset900_Age4" "Dataset901_Age4" "Dataset902_Age4")
 
 export nnUNet_raw=$ROOT_DIR"nnUNet_raw"
 export nnUNet_preprocessed=$ROOT_DIR"nnUNet_preprocessed"

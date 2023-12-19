@@ -90,9 +90,6 @@ def computeHDDIstance(pred, gt, vox_spacing):
     pred_one_hot = np.expand_dims(pred_one_hot, axis=0)
     gt_one_hot = np.expand_dims(gt_one_hot, axis=0)
 
-    # DEBUG: check dimensions. we should have 5
-    print("Pred before HD: {}".format(pred_one_hot.shape))
-
     hd = compute_hausdorff_distance(pred_one_hot, gt_one_hot, include_background=False, distance_metric='euclidean', percentile=None,
                                directed=False, spacing=vox_spacing)
 
@@ -151,13 +148,7 @@ def calculateMetrics():
             # get the volume of 1 voxel in mm3
             sx, sy, sz = gt_nii.header.get_zooms()
             vox_vol = sx * sy * sz
-            #vox_spacing = np.array([sx, sy, sz], dtype=float)
-            #np.array().astype('float')
             vox_spacing = [sx.item(), sy.item(), sz.item()]
-
-            #print(vox_spacing)
-            #print(type(vox_spacing))
-            #vox_spacing = vox_spacing.astype('float')
 
             pred = pred_nii.get_fdata()
             gt = gt_nii.get_fdata()
@@ -168,10 +159,6 @@ def calculateMetrics():
             # Get Dice and NSD and volumes
             dice = multiChannelDice(pred, gt, n_channels)
             hd, hd95 = computeHDDIstance(pred, gt, vox_spacing)
-
-            # DEBUG: shape of HD values
-            print("Shape of HD array: {}".format(hd.numpy().shape))
-            print("Shape of Dice array: {}".format(dice.shape))
 
             vol_pred, vol_gt = getVolume(pred, gt, vox_vol)
 
