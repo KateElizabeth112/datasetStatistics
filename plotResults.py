@@ -14,7 +14,6 @@ lred = "#f36860"
 custom_palette = [lblu, lred]
 
 
-
 def plotDistribution(g1_ex1, g2_ex1, g1_ex2, g2_ex2, g1_ex3, g2_ex3, label_g1, label_g2, organ_dict, ylabel, save_path):
     # plot dice for all organs
     organs = list(organ_dict.keys())

@@ -8,20 +8,21 @@ from printResults import printDeltas, printVolumes, printVolumeErrors
 root_dir = "/Users/katecevora/Documents/PhD/data"
 output_dir = "/Users/katecevora/Documents/PhD/results"
 
-"""
+
 organ_dict = {"background": 0,
               "right kidney": 1,
               "left kidney": 2,
               "liver": 3,
               "pancreas": 4}
 
-dataset = "AMOS_3D"
+dataset = "TotalSegmentator"
 variable = "age"
-label_g1 = "Under 40"
-label_g2 = "Over 65"
-age_1 = 40
-age_2 = 65
+label_g1 = "Under 50"
+label_g2 = "Over 70"
+age_1 = 50
+age_2 = 70
 
+"""
 
 organ_dict = {"background": 0,
           "kidney": 1,
@@ -33,7 +34,7 @@ label_g1 = "Under 50"
 label_g2 = "Over 70"
 age_1 = 50
 age_2 = 70
-"""
+
 
 dataset = "AMOS_3D"
 organ_dict = {"background": 0,
@@ -58,7 +59,7 @@ label_g1 = "Under 40"
 label_g2 = "Over 65"
 age_1 = 40
 age_2 = 65
-
+"""
 
 def createFolders(output_dir, dataset, variable):
     if not os.path.exists(os.path.join(output_dir, dataset)):
@@ -96,7 +97,7 @@ def getVolumeErrors(vol_gt, vol_pred_ex1, vol_pred_ex2, vol_pred_ex3):
 def main():
     createFolders(output_dir, dataset, variable)
 
-    f = open(os.path.join(root_dir, dataset, "inference", "results_age_0.pkl"), 'rb')
+    f = open(os.path.join(root_dir, dataset, "inference", "results_Age_0.pkl"), 'rb')
     results_ex1 = pkl.load(f)
     f.close()
 
@@ -105,24 +106,24 @@ def main():
     age = results_ex1["age"].flatten()
 
     dice_ex1 = results_ex1["dice"].reshape((-1, np.array(results_ex1["dice"]).shape[-1]))
-    hd_ex1 = np.array(results_ex1["hd"]).reshape((-1, np.array(results_ex1["hd"]).shape[-1]))
+    hd_ex1 = np.array(results_ex1["hd95"]).reshape((-1, np.array(results_ex1["hd"]).shape[-1]))
     vol_pred_ex1 = results_ex1["vol_pred"].reshape((-1, np.array(results_ex1["vol_pred"]).shape[-1]))
     vol_gt = results_ex1["vol_gt"].reshape((-1, np.array(results_ex1["vol_gt"]).shape[-1]))
 
-    f = open(os.path.join(root_dir, dataset, "inference", "results_age_1.pkl"), 'rb')
+    f = open(os.path.join(root_dir, dataset, "inference", "results_Age_1.pkl"), 'rb')
     results_ex2 = pkl.load(f)
     f.close()
 
     dice_ex2 = results_ex2["dice"].reshape((-1, np.array(results_ex2["dice"]).shape[-1]))
-    hd_ex2 = np.array(results_ex2["hd"]).reshape((-1, np.array(results_ex2["hd"]).shape[-1]))
+    hd_ex2 = np.array(results_ex2["hd95"]).reshape((-1, np.array(results_ex2["hd"]).shape[-1]))
     vol_pred_ex2 = results_ex2["vol_pred"].reshape((-1, np.array(results_ex2["vol_pred"]).shape[-1]))
 
-    f = open(os.path.join(root_dir, dataset, "inference", "results_age_2.pkl"), 'rb')
+    f = open(os.path.join(root_dir, dataset, "inference", "results_Age_2.pkl"), 'rb')
     results_ex3 = pkl.load(f)
     f.close()
 
     dice_ex3 = results_ex3["dice"].reshape((-1, np.array(results_ex3["dice"]).shape[-1]))
-    hd_ex3 = np.array(results_ex3["hd"]).reshape((-1, np.array(results_ex3["hd"]).shape[-1]))
+    hd_ex3 = np.array(results_ex3["hd95"]).reshape((-1, np.array(results_ex3["hd"]).shape[-1]))
     vol_pred_ex3 = results_ex3["vol_pred"].reshape((-1, np.array(results_ex3["vol_pred"]).shape[-1]))
 
     # sort by characteristic of interest
