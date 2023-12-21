@@ -21,10 +21,10 @@ dataset = args["dataset"]
 
 print("Task: {}, Experiment: {}, Root Directory: {}".format(task, dataset, root_dir))
 
-fold = "all"
+fold = "cross"
 
 preds_dir = os.path.join(root_dir, "inference", task, fold)
-gt_dir = os.path.join(root_dir, "nnUNet_raw", task, "labelsTs")
+#gt_dir = os.path.join(root_dir, "nnUNet_raw", task, "labelsTs")
 
 if dataset == "AMOS":
     labels = {"background": 0,
@@ -43,12 +43,14 @@ if dataset == "AMOS":
               "duodenum": 13,
               "bladder": 14,
               "prostate/uterus": 15}
+    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset200_AMOS", "labelsTs")
 elif dataset == "TotalSegmentator":
     labels = {"background": 0,
               "right kidney": 1,
               "left kidney": 2,
               "liver": 3,
               "pancreas": 4}
+    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset300_Full", "labelsTs")
 else:
     print("Dataset not recognised")
 

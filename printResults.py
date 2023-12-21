@@ -30,7 +30,7 @@ def printDeltas(g1_ex1, g2_ex1, g1_ex2, g2_ex2, g1_ex3, g2_ex3, organ_dict, labe
 
         organ = organs[j]
 
-        if label == "HD95":
+        if (label == "HD95") or (label == "HD"):
             i = copy.deepcopy(j-1)
         else:
             i = copy.deepcopy(j)
@@ -154,7 +154,7 @@ def printVolumeErrors(vol_err_g1_ex1, vol_err_g2_ex1, vol_err_g1_ex2, vol_err_g2
                                                                                        g1_ex3_mean, g2_ex3_mean) + r"\\" + "\n")
 
 
-def printCrossDeltas(ds1_self, ds2_self, ds1_cross, ds2_cross, organ_dict, file_path):
+def printCrossDeltas(ds1_self, ds2_self, ds1_cross, ds2_cross, organ_dict, label, file_path):
     # Calculate the deltas from the baseline experiment for cross-dataset generalisation
     organs = list(organ_dict.keys())
     n_channels = len(organs)
@@ -163,8 +163,13 @@ def printCrossDeltas(ds1_self, ds2_self, ds1_cross, ds2_cross, organ_dict, file_
     if os.path.exists(file_path):
         os.remove(file_path)
 
-    for i in range(1, n_channels):
-        organ = organs[i]
+    for j in range(1, n_channels):
+        organ = organs[j]
+
+        if (label == "HD95") or (label == "HD"):
+            i = copy.deepcopy(j-1)
+        else:
+            i = copy.deepcopy(j)
 
         # Delete NaNs
         ds1_self_i = ds1_self[:, i][np.isfinite(ds1_self[:, i])]

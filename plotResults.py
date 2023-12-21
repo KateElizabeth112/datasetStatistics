@@ -25,7 +25,7 @@ def plotDistribution(g1_ex1, g2_ex1, g1_ex2, g2_ex2, g1_ex3, g2_ex3, label_g1, l
         if organ == "prostate/uterus":
             organ = "prostate or uterus"
 
-        if ylabel == "HD95":
+        if (ylabel == "HD95") or (ylabel == "HD"):
             j = copy.deepcopy(i-1)
         else:
             j = copy.deepcopy(i)
@@ -180,35 +180,41 @@ def plotVolumeDistribution(vol_g1, vol_g2, label_g1, label_g2, organs_dict, save
     plt.savefig(os.path.join(save_path, "volume_norm_distribution.png"))
 
 
-def plotDualDistribution(vol_g1, vol_g2, label_g1, label_g2, title, organs_dict, save_path):
+def plotDualDistribution(g1, g2, label_g1, label_g2, title, organs_dict, save_path):
     organs = list(organs_dict.keys())
 
     organ_name = []
-    normalised_volume = []
+    all_results = []
     group = []
 
     for i in range(1, len(organs)):
         organ = organs[i]
 
-        vol_g1_i = vol_g1[:, i]
-        vol_g2_i = vol_g2[:, i]
+        if (title == "HD95") or (title == "HD"):
+            j = copy.deepcopy(i-1)
+        else:
+            j = copy.deepcopy(i)
 
-        vol_g1_i = vol_g1_i[np.isfinite(vol_g1_i)]
-        vol_g2_i = vol_g2_i[np.isfinite(vol_g2_i)]
+        g1_i = g1[:, j]
+        g2_i = g2[:, j]
 
-        organ_name += [organ for _ in range(vol_g1_i.shape[0])]
-        organ_name += [organ for _ in range(vol_g2_i.shape[0])]
+        g1_i = g1_i[np.isfinite(g1_i)]
+        g2_i = g2_i[np.isfinite(g2_i)]
 
-        group += [label_g1 for _ in range(vol_g1_i.shape[0])]
-        group += [label_g2 for _ in range(vol_g2_i.shape[0])]
+        organ_name += [organ for _ in range(g1_i.shape[0])]
+        organ_name += [organ for _ in range(g2_i.shape[0])]
 
-        normalised_volume += list(vol_g1_i)
-        normalised_volume += list(vol_g2_i)
+        group += [label_g1 for _ in range(g1_i.shape[0])]
+        group += [label_g2 for _ in range(g2_i.shape[0])]
+
+        all_results += list(g1_i)
+        all_results += list(g2_i)
 
     # Now build the data frame
-    df = pd.DataFrame({title: normalised_volume,
+    df = pd.DataFrame({title: all_results,
                        'Group': group,
                        'Organ Name': organ_name})
+    plt.clf()
     sns.boxplot(y=title, x='Organ Name', data=df, hue='Group', palette=custom_palette, showfliers=False)
     plt.xticks(rotation=45, fontsize=8)
     plt.tight_layout()

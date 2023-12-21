@@ -8,58 +8,61 @@ from printResults import printDeltas, printVolumes, printVolumeErrors
 root_dir = "/Users/katecevora/Documents/PhD/data"
 output_dir = "/Users/katecevora/Documents/PhD/results"
 
-
-organ_dict = {"background": 0,
-              "right kidney": 1,
-              "left kidney": 2,
-              "liver": 3,
-              "pancreas": 4}
-
+#dataset = "KITS19"
 dataset = "TotalSegmentator"
-variable = "age"
-label_g1 = "Under 50"
-label_g2 = "Over 70"
-age_1 = 50
-age_2 = 70
+#dataset = "AMOS_3D"
 
-"""
-
-organ_dict = {"background": 0,
-          "kidney": 1,
-          "tumor": 2}
-
-dataset = "KITS19"
-variable = "age"
-label_g1 = "Under 50"
-label_g2 = "Over 70"
-age_1 = 50
-age_2 = 70
+if dataset == "TotalSegmentator":
+    organ_dict = {"background": 0,
+                  "right kidney": 1,
+                  "left kidney": 2,
+                  "liver": 3,
+                  "pancreas": 4}
 
 
-dataset = "AMOS_3D"
-organ_dict = {"background": 0,
-          "spleen": 1,
-          "right kidney": 2,
-          "left kidney": 3,
-          "gallbladder": 4,
-          "esophagus": 5,
-          "liver": 6,
-          "stomach": 7,
-          "aorta": 8,
-          "inferior vena cava": 9,
-          "pancreas": 10,
-          "right adrenal gland": 11,
-          "left adrenal gland": 12,
-          "duodenum": 13,
-          "bladder": 14,
-          "prostate/uterus": 15}
+    variable = "age"
+    label_g1 = "Under 50"
+    label_g2 = "Over 70"
+    age_1 = 50
+    age_2 = 70
 
-variable = "age"
-label_g1 = "Under 40"
-label_g2 = "Over 65"
-age_1 = 40
-age_2 = 65
-"""
+elif dataset == "KITS19":
+    organ_dict = {"background": 0,
+              "kidney": 1,
+              "tumor": 2}
+
+    variable = "age"
+    label_g1 = "Under 50"
+    label_g2 = "Over 70"
+    age_1 = 50
+    age_2 = 70
+
+elif dataset == "AMOS_3D":
+    organ_dict = {"background": 0,
+              "spleen": 1,
+              "right kidney": 2,
+              "left kidney": 3,
+              "gallbladder": 4,
+              "esophagus": 5,
+              "liver": 6,
+              "stomach": 7,
+              "aorta": 8,
+              "inferior vena cava": 9,
+              "pancreas": 10,
+              "right adrenal gland": 11,
+              "left adrenal gland": 12,
+              "duodenum": 13,
+              "bladder": 14,
+              "prostate/uterus": 15}
+
+    variable = "age"
+    label_g1 = "Under 40"
+    label_g2 = "Over 65"
+    age_1 = 40
+    age_2 = 65
+else:
+    print("Dataset not recognised")
+
 
 def createFolders(output_dir, dataset, variable):
     if not os.path.exists(os.path.join(output_dir, dataset)):
@@ -79,6 +82,9 @@ def createFolders(output_dir, dataset, variable):
 
     if not os.path.exists(os.path.join(output_dir, dataset, variable, "plots", "hd")):
         os.mkdir(os.path.join(output_dir, dataset, variable, "plots", "hd"))
+
+    if not os.path.exists(os.path.join(output_dir, dataset, variable, "plots", "hd95")):
+        os.mkdir(os.path.join(output_dir, dataset, variable, "plots", "hd95"))
 
     if not os.path.exists(os.path.join(output_dir, dataset, variable, "plots", "volume")):
         os.mkdir(os.path.join(output_dir, dataset, variable, "plots", "volume"))
@@ -106,7 +112,8 @@ def main():
     age = results_ex1["age"].flatten()
 
     dice_ex1 = results_ex1["dice"].reshape((-1, np.array(results_ex1["dice"]).shape[-1]))
-    hd_ex1 = np.array(results_ex1["hd95"]).reshape((-1, np.array(results_ex1["hd"]).shape[-1]))
+    hd95_ex1 = np.array(results_ex1["hd95"]).reshape((-1, np.array(results_ex1["hd95"]).shape[-1]))
+    hd_ex1 = np.array(results_ex1["hd"]).reshape((-1, np.array(results_ex1["hd"]).shape[-1]))
     vol_pred_ex1 = results_ex1["vol_pred"].reshape((-1, np.array(results_ex1["vol_pred"]).shape[-1]))
     vol_gt = results_ex1["vol_gt"].reshape((-1, np.array(results_ex1["vol_gt"]).shape[-1]))
 
@@ -115,7 +122,8 @@ def main():
     f.close()
 
     dice_ex2 = results_ex2["dice"].reshape((-1, np.array(results_ex2["dice"]).shape[-1]))
-    hd_ex2 = np.array(results_ex2["hd95"]).reshape((-1, np.array(results_ex2["hd"]).shape[-1]))
+    hd95_ex2 = np.array(results_ex2["hd95"]).reshape((-1, np.array(results_ex2["hd95"]).shape[-1]))
+    hd_ex2 = np.array(results_ex2["hd"]).reshape((-1, np.array(results_ex2["hd"]).shape[-1]))
     vol_pred_ex2 = results_ex2["vol_pred"].reshape((-1, np.array(results_ex2["vol_pred"]).shape[-1]))
 
     f = open(os.path.join(root_dir, dataset, "inference", "results_Age_2.pkl"), 'rb')
@@ -123,7 +131,8 @@ def main():
     f.close()
 
     dice_ex3 = results_ex3["dice"].reshape((-1, np.array(results_ex3["dice"]).shape[-1]))
-    hd_ex3 = np.array(results_ex3["hd95"]).reshape((-1, np.array(results_ex3["hd"]).shape[-1]))
+    hd95_ex3 = np.array(results_ex3["hd95"]).reshape((-1, np.array(results_ex3["hd95"]).shape[-1]))
+    hd_ex3 = np.array(results_ex3["hd"]).reshape((-1, np.array(results_ex3["hd"]).shape[-1]))
     vol_pred_ex3 = results_ex3["vol_pred"].reshape((-1, np.array(results_ex3["vol_pred"]).shape[-1]))
 
     # sort by characteristic of interest
@@ -143,6 +152,25 @@ def main():
     file_path = os.path.join(output_dir, dataset, variable, "text", "dice.txt")
     printDeltas(dice_g1_ex1, dice_g2_ex1, dice_g1_ex2, dice_g2_ex2, dice_g1_ex3, dice_g2_ex3, organ_dict, "Dice", file_path)
 
+    # HD95
+    # sort by characteristic of interest
+    hd95_g1_ex1 = hd95_ex1[age <= age_1, :]
+    hd95_g2_ex1 = hd95_ex1[age >= age_2, :]
+    hd95_g1_ex2 = hd95_ex2[age <= age_1, :]
+    hd95_g2_ex2 = hd95_ex2[age >= age_2, :]
+    hd95_g1_ex3 = hd95_ex3[age <= age_1, :]
+    hd95_g2_ex3 = hd95_ex3[age >= age_2, :]
+
+    # Plot HD95 distribution for each organ
+    save_path = os.path.join(output_dir, dataset, variable, "plots", "hd95")
+    plotDistribution(hd95_g1_ex1, hd95_g2_ex1, hd95_g1_ex2, hd95_g2_ex2, hd95_g1_ex3, hd95_g2_ex3,
+                     label_g1, label_g2, organ_dict, "HD95", save_path)
+
+    # Print HD95 gaps
+    file_path = os.path.join(output_dir, dataset, variable, "text", "hd95.txt")
+    printDeltas(hd95_g1_ex1, hd95_g2_ex1, hd95_g1_ex2, hd95_g2_ex2, hd95_g1_ex3, hd95_g2_ex3, organ_dict, "HD95", file_path)
+
+    # HD
     # sort by characteristic of interest
     hd_g1_ex1 = hd_ex1[age <= age_1, :]
     hd_g2_ex1 = hd_ex1[age >= age_2, :]
@@ -154,12 +182,14 @@ def main():
     # Plot HD distribution for each organ
     save_path = os.path.join(output_dir, dataset, variable, "plots", "hd")
     plotDistribution(hd_g1_ex1, hd_g2_ex1, hd_g1_ex2, hd_g2_ex2, hd_g1_ex3, hd_g2_ex3,
-                     label_g1, label_g2, organ_dict, "HD95", save_path)
+                     label_g1, label_g2, organ_dict, "HD", save_path)
 
     # Print HD gaps
     file_path = os.path.join(output_dir, dataset, variable, "text", "hd.txt")
-    printDeltas(hd_g1_ex1, hd_g2_ex1, hd_g1_ex2, hd_g2_ex2, hd_g1_ex3, hd_g2_ex3, organ_dict, "HD95", file_path)
+    printDeltas(hd_g1_ex1, hd_g2_ex1, hd_g1_ex2, hd_g2_ex2, hd_g1_ex3, hd_g2_ex3, organ_dict, "HD",
+                file_path)
 
+    # VOLUME
     vol_err_ex1, vol_err_ex2, vol_err_ex3 = getVolumeErrors(vol_gt, vol_pred_ex1, vol_pred_ex2, vol_pred_ex3)
 
     vol_err_g1_ex1 = vol_err_ex1[age <= age_1, :]
