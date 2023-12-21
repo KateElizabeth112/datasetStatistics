@@ -21,7 +21,7 @@ dataset = args["dataset"]
 
 print("Task: {}, Experiment: {}, Root Directory: {}".format(task, dataset, root_dir))
 
-fold = "cross"
+fold = "all"
 
 preds_dir = os.path.join(root_dir, "inference", task, fold)
 #gt_dir = os.path.join(root_dir, "nnUNet_raw", task, "labelsTs")
