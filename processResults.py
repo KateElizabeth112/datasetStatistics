@@ -43,14 +43,14 @@ if dataset == "AMOS":
               "duodenum": 13,
               "bladder": 14,
               "prostate/uterus": 15}
-    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset200_AMOS", "labelsTs")
+    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset200_AMOS", "labelsTr")
 elif dataset == "TotalSegmentator":
     labels = {"background": 0,
               "right kidney": 1,
               "left kidney": 2,
               "liver": 3,
               "pancreas": 4}
-    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset300_Full", "labelsTs")
+    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset300_Full", "labelsTr")
 else:
     print("Dataset not recognised")
 
