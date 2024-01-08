@@ -50,8 +50,9 @@ for number in {0..14}; do
     #nnUNetv2_predict -i $INPUT_FOLDER -o $OUTPUT_FOLDER -d $TASK -c 3d_fullres -f all -chk checkpoint_best.pth
 
     # Run python script to evaluate results
-    python3 processResults.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
+    #python3 processResults.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
 
 done
 
-python3 combineFolds.py -r $ROOT_DIR -v "Fold"
+# set variable to Sex or Age
+python3 combineFolds.py -r $ROOT_DIR -v "Sex"
