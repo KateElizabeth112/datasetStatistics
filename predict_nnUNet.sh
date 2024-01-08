@@ -29,13 +29,17 @@ DATASET="TotalSegmentator"
 #              "Dataset800_Fold3" "Dataset801_Fold3" "Dataset802_Fold3"
 #              "Dataset900_Fold4" "Dataset901_Fold4" "Dataset902_Fold4")
 
-experiments=("Dataset600_Fold1")
+experiments=("Dataset503_Fold0"
+             "Dataset603_Fold1"
+             "Dataset703_Fold2"
+             "Dataset803_Fold3"
+             "Dataset903_Fold4")
 
 export nnUNet_raw=$ROOT_DIR"nnUNet_raw"
 export nnUNet_preprocessed=$ROOT_DIR"nnUNet_preprocessed"
 export nnUNet_results=$ROOT_DIR"nnUNet_results"
 
-for number in {0..1}; do
+for number in {0..4}; do
     EXPERIMENT=${experiments[number]}
     TASK=${EXPERIMENT:7:3}
 
