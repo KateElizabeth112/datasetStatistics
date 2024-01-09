@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -l walltime=2:00:00
 #PBS -l select=1:ncpus=15:mem=120gb:ngpus=1:gpu_type=RTX6000
-#PBS -N predict_TS_sex
+#PBS -N predict_AMOS_sex
 
 cd ${PBS_O_WORKDIR}
 
@@ -13,11 +13,11 @@ source activate nnUNetv2
 python -c "import torch;print(torch.cuda.is_available())"
 
 # Set environment variables
-#ROOT_DIR='/rds/general/user/kc2322/home/data/AMOS_3D/'
-ROOT_DIR='/rds/general/user/kc2322/projects/cevora_phd/live/TotalSegmentator/'
+ROOT_DIR='/rds/general/user/kc2322/home/data/AMOS_3D/'
+#ROOT_DIR='/rds/general/user/kc2322/projects/cevora_phd/live/TotalSegmentator/'
 
-DATASET="TotalSegmentator"
-#DATASET="AMOS"
+#DATASET="TotalSegmentator"
+DATASET="AMOS"
 #experiments=("Dataset500_Age0" "Dataset501_Age0" "Dataset502_Age0"
 #             "Dataset600_Age1" "Dataset601_Age1" "Dataset602_Age1"
 #             "Dataset700_Age2" "Dataset701_Age2" "Dataset702_Age2"
@@ -56,7 +56,7 @@ for number in {0..4}; do
     #nnUNetv2_predict -i $INPUT_FOLDER -o $OUTPUT_FOLDER -d $TASK -c 3d_fullres -f all -chk checkpoint_best.pth
 
     # Run python script to evaluate results
-    python3 processResults.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
+    #python3 processResults.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
 
 done
 
