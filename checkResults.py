@@ -8,9 +8,11 @@ from printResults import printDeltas, printVolumes, printVolumeErrors
 root_dir = "/Users/katecevora/Documents/PhD/data"
 output_dir = "/Users/katecevora/Documents/PhD/results"
 
-#dataset = "KITS19"
 dataset = "TotalSegmentator"
 #dataset = "AMOS_3D"
+
+# variable = "Age"
+variable = "Sex"
 
 if dataset == "TotalSegmentator":
     organ_dict = {"background": 0,
@@ -19,23 +21,29 @@ if dataset == "TotalSegmentator":
                   "liver": 3,
                   "pancreas": 4}
 
-
-    variable = "age"
-    label_g1 = "Under 50"
-    label_g2 = "Over 70"
-    age_1 = 50
-    age_2 = 70
+    if variable == "Sex":
+        label_g1 = "Male"
+        label_g2 = "Female"
+    elif variable == "Age":
+        label_g1 = "Under 50"
+        label_g2 = "Over 70"
+        age_1 = 50
+        age_2 = 70
 
 elif dataset == "KITS19":
     organ_dict = {"background": 0,
               "kidney": 1,
               "tumor": 2}
 
-    variable = "age"
-    label_g1 = "Under 50"
-    label_g2 = "Over 70"
-    age_1 = 50
-    age_2 = 70
+    if variable == "Sex":
+        label_g1 = "Male"
+        label_g2 = "Female"
+    elif variable == "Age":
+        label_g1 = "Under 50"
+        label_g2 = "Over 70"
+        age_1 = 50
+        age_2 = 70
+
 
 elif dataset == "AMOS_3D":
     organ_dict = {"background": 0,
@@ -55,11 +63,15 @@ elif dataset == "AMOS_3D":
               "bladder": 14,
               "prostate/uterus": 15}
 
-    variable = "age"
-    label_g1 = "Under 40"
-    label_g2 = "Over 65"
-    age_1 = 40
-    age_2 = 65
+    if variable == "Sex":
+        label_g1 = "Male"
+        label_g2 = "Female"
+    elif variable == "Age":
+        label_g1 = "Under 50"
+        label_g2 = "Over 70"
+        age_1 = 40
+        age_2 = 65
+
 else:
     print("Dataset not recognised")
 
@@ -103,7 +115,7 @@ def getVolumeErrors(vol_gt, vol_pred_ex1, vol_pred_ex2, vol_pred_ex3):
 def main():
     createFolders(output_dir, dataset, variable)
 
-    f = open(os.path.join(root_dir, dataset, "inference", "results_Age_0.pkl"), 'rb')
+    f = open(os.path.join(root_dir, dataset, "inference", "results_{}_0.pkl".format(variable)), 'rb')
     results_ex1 = pkl.load(f)
     f.close()
 
@@ -117,7 +129,7 @@ def main():
     vol_pred_ex1 = results_ex1["vol_pred"].reshape((-1, np.array(results_ex1["vol_pred"]).shape[-1]))
     vol_gt = results_ex1["vol_gt"].reshape((-1, np.array(results_ex1["vol_gt"]).shape[-1]))
 
-    f = open(os.path.join(root_dir, dataset, "inference", "results_Age_1.pkl"), 'rb')
+    f = open(os.path.join(root_dir, dataset, "inference", "results_{}_1.pkl".format(variable)), 'rb')
     results_ex2 = pkl.load(f)
     f.close()
 
@@ -126,7 +138,7 @@ def main():
     hd_ex2 = np.array(results_ex2["hd"]).reshape((-1, np.array(results_ex2["hd"]).shape[-1]))
     vol_pred_ex2 = results_ex2["vol_pred"].reshape((-1, np.array(results_ex2["vol_pred"]).shape[-1]))
 
-    f = open(os.path.join(root_dir, dataset, "inference", "results_Age_2.pkl"), 'rb')
+    f = open(os.path.join(root_dir, dataset, "inference", "results_{}_2.pkl".format(variable)), 'rb')
     results_ex3 = pkl.load(f)
     f.close()
 
@@ -136,12 +148,21 @@ def main():
     vol_pred_ex3 = results_ex3["vol_pred"].reshape((-1, np.array(results_ex3["vol_pred"]).shape[-1]))
 
     # sort by characteristic of interest
-    dice_g1_ex1 = dice_ex1[age <= age_1, :]
-    dice_g2_ex1 = dice_ex1[age >= age_2, :]
-    dice_g1_ex2 = dice_ex2[age <= age_1, :]
-    dice_g2_ex2 = dice_ex2[age >= age_2, :]
-    dice_g1_ex3 = dice_ex3[age <= age_1, :]
-    dice_g2_ex3 = dice_ex3[age >= age_2, :]
+    if variable == "Age":
+        dice_g1_ex1 = dice_ex1[age <= age_1, :]
+        dice_g2_ex1 = dice_ex1[age >= age_2, :]
+        dice_g1_ex2 = dice_ex2[age <= age_1, :]
+        dice_g2_ex2 = dice_ex2[age >= age_2, :]
+        dice_g1_ex3 = dice_ex3[age <= age_1, :]
+        dice_g2_ex3 = dice_ex3[age >= age_2, :]
+    elif variable == "Sex":
+        dice_g1_ex1 = dice_ex1[sex == 0, :]
+        dice_g2_ex1 = dice_ex1[sex == 1, :]
+        dice_g1_ex2 = dice_ex2[sex == 0, :]
+        dice_g2_ex2 = dice_ex2[sex == 1, :]
+        dice_g1_ex3 = dice_ex3[sex == 0, :]
+        dice_g2_ex3 = dice_ex3[sex == 1, :]
+
 
     # Plot Dice Scores
     save_path = os.path.join(output_dir, dataset, variable, "plots", "dice")
@@ -154,12 +175,20 @@ def main():
 
     # HD95
     # sort by characteristic of interest
-    hd95_g1_ex1 = hd95_ex1[age <= age_1, :]
-    hd95_g2_ex1 = hd95_ex1[age >= age_2, :]
-    hd95_g1_ex2 = hd95_ex2[age <= age_1, :]
-    hd95_g2_ex2 = hd95_ex2[age >= age_2, :]
-    hd95_g1_ex3 = hd95_ex3[age <= age_1, :]
-    hd95_g2_ex3 = hd95_ex3[age >= age_2, :]
+    if variable == "Age":
+        hd95_g1_ex1 = hd95_ex1[age <= age_1, :]
+        hd95_g2_ex1 = hd95_ex1[age >= age_2, :]
+        hd95_g1_ex2 = hd95_ex2[age <= age_1, :]
+        hd95_g2_ex2 = hd95_ex2[age >= age_2, :]
+        hd95_g1_ex3 = hd95_ex3[age <= age_1, :]
+        hd95_g2_ex3 = hd95_ex3[age >= age_2, :]
+    elif variable == "Sex":
+        hd95_g1_ex1 = hd95_ex1[sex == 0, :]
+        hd95_g2_ex1 = hd95_ex1[sex == 1, :]
+        hd95_g1_ex2 = hd95_ex2[sex == 0, :]
+        hd95_g2_ex2 = hd95_ex2[sex == 1, :]
+        hd95_g1_ex3 = hd95_ex3[sex == 0, :]
+        hd95_g2_ex3 = hd95_ex3[sex == 1, :]
 
     # Plot HD95 distribution for each organ
     save_path = os.path.join(output_dir, dataset, variable, "plots", "hd95")
@@ -172,12 +201,20 @@ def main():
 
     # HD
     # sort by characteristic of interest
-    hd_g1_ex1 = hd_ex1[age <= age_1, :]
-    hd_g2_ex1 = hd_ex1[age >= age_2, :]
-    hd_g1_ex2 = hd_ex2[age <= age_1, :]
-    hd_g2_ex2 = hd_ex2[age >= age_2, :]
-    hd_g1_ex3 = hd_ex3[age <= age_1, :]
-    hd_g2_ex3 = hd_ex3[age >= age_2, :]
+    if variable == "Age":
+        hd_g1_ex1 = hd_ex1[age <= age_1, :]
+        hd_g2_ex1 = hd_ex1[age >= age_2, :]
+        hd_g1_ex2 = hd_ex2[age <= age_1, :]
+        hd_g2_ex2 = hd_ex2[age >= age_2, :]
+        hd_g1_ex3 = hd_ex3[age <= age_1, :]
+        hd_g2_ex3 = hd_ex3[age >= age_2, :]
+    elif variable == "Sex":
+        hd_g1_ex1 = hd_ex1[sex == 0, :]
+        hd_g2_ex1 = hd_ex1[sex == 1, :]
+        hd_g1_ex2 = hd_ex2[sex == 0, :]
+        hd_g2_ex2 = hd_ex2[sex == 1, :]
+        hd_g1_ex3 = hd_ex3[sex == 0, :]
+        hd_g2_ex3 = hd_ex3[sex == 1, :]
 
     # Plot HD distribution for each organ
     save_path = os.path.join(output_dir, dataset, variable, "plots", "hd")
@@ -192,15 +229,26 @@ def main():
     # VOLUME
     vol_err_ex1, vol_err_ex2, vol_err_ex3 = getVolumeErrors(vol_gt, vol_pred_ex1, vol_pred_ex2, vol_pred_ex3)
 
-    vol_err_g1_ex1 = vol_err_ex1[age <= age_1, :]
-    vol_err_g2_ex1 = vol_err_ex1[age >= age_2, :]
-    vol_err_g1_ex2 = vol_err_ex2[age <= age_1, :]
-    vol_err_g2_ex2 = vol_err_ex2[age >= age_2, :]
-    vol_err_g1_ex3 = vol_err_ex3[age <= age_1, :]
-    vol_err_g2_ex3 = vol_err_ex3[age >= age_2, :]
+    if variable == "Age":
+        vol_err_g1_ex1 = vol_err_ex1[age <= age_1, :]
+        vol_err_g2_ex1 = vol_err_ex1[age >= age_2, :]
+        vol_err_g1_ex2 = vol_err_ex2[age <= age_1, :]
+        vol_err_g2_ex2 = vol_err_ex2[age >= age_2, :]
+        vol_err_g1_ex3 = vol_err_ex3[age <= age_1, :]
+        vol_err_g2_ex3 = vol_err_ex3[age >= age_2, :]
 
-    vol_gt_g1 = vol_gt[age <= age_1]
-    vol_gt_g2 = vol_gt[age >= age_2]
+        vol_gt_g1 = vol_gt[age <= age_1]
+        vol_gt_g2 = vol_gt[age >= age_2]
+    elif variable == "Sex":
+        vol_err_g1_ex1 = vol_err_ex1[sex == 0, :]
+        vol_err_g2_ex1 = vol_err_ex1[sex == 1, :]
+        vol_err_g1_ex2 = vol_err_ex2[sex == 0, :]
+        vol_err_g2_ex2 = vol_err_ex2[sex == 1, :]
+        vol_err_g1_ex3 = vol_err_ex3[sex == 0, :]
+        vol_err_g2_ex3 = vol_err_ex3[sex == 1, :]
+
+        vol_gt_g1 = vol_gt[sex == 0]
+        vol_gt_g2 = vol_gt[sex == 1]
 
     # Plot distribution of volume errors
     save_path = os.path.join(output_dir, dataset, variable, "plots", "volume")

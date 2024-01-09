@@ -55,7 +55,7 @@ def main():
 
         print(np.array(dice_all).shape)
 
-        f = open(os.path.join(root_dir, "inference", "results_{}_{}.pkl".format(s, ex)), 'wb')
+        f = open(os.path.join(root_dir, "inference", "results_{}_{}.pkl".format(variable, ex)), 'wb')
         pkl.dump({"case_id": np.array(case_id_all),
                   "sex": np.array(sex_all),
                   "age": np.array(age_all),
