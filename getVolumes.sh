@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=1:00:00
+#PBS -l walltime=2:00:00
 #PBS -l select=1:ncpus=12:mem=32gb
 #PBS -N organ_volumes
 
@@ -10,3 +10,4 @@ module load anaconda3/personal
 source activate nnUNetv2
 
 python3 getOrganVolumes.py -d "TS"
+python3 getOrganVolumes.py -d "AMOS"
