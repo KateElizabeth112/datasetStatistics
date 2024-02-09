@@ -62,9 +62,6 @@ def calculate_volumes():
             gt = gt_nii.get_fdata()
             volumes = []
 
-            # cycle over each organ
-            organs = list(labels.keys())
-
             for i in organs:
                 voxel_count = np.sum(gt == i)
                 volumes.append(voxel_count * volume)
