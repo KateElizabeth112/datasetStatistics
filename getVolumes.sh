@@ -9,5 +9,5 @@ cd ${PBS_O_WORKDIR}
 module load anaconda3/personal
 source activate nnUNetv2
 
-python3 getOrganVolumes.py -d "TS"
-python3 getOrganVolumes.py -d "AMOS"
+python3 getVolumes.py -d "TS"
+python3 getVolumes.py -d "AMOS"
