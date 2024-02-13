@@ -83,7 +83,7 @@ def calculate_volumes():
 
             # plot the organs as a 3D mesh
             save_path = os.path.join(root_dir, "volume_plots")
-            plot3Dmesh(gt, save_path, f[5:9])
+            plot3Dmesh(gt, volumes, save_path, f[5:9])
 
     # Save the volumes ready for further processing
     f = open(os.path.join(root_dir, "volumes.pkl"), "wb")
