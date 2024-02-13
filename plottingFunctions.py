@@ -39,7 +39,7 @@ def plot3Dmesh(gt, volumes, save_path, subject):
             except:
                 print("GT mesh extraction failed")
 
-            fig.update_layout(title_text="{0} volume: {1:.0f} ml".format(organ_dict[k], volumes[int(k)] / 1000))
+            fig.update_layout(title_text="{0} volume: {1:.0f} ml".format(organ_dict[k], volumes[int(k)-1] / 1000))
             fig.update_xaxes(visible=False, showticklabels=False)
             fig.write_image(os.path.join(save_path, "{}_{}.png".format(organ_dict[k], subject)))
 
