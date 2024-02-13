@@ -3,12 +3,13 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from skimage import measure
 import numpy as np
+import os
 
 organ_dict = {1: "left kidney", 2: "right kidney", 3: "liver", 4: "pancreas"}
 
 
 # Plot a 3D mesh from a binary  3D label alongside the ground truth
-def plot3Dmesh(gt, save_path=""):
+def plot3Dmesh(gt, volumes, save_path, subject):
     fig = go.Figure()
 
     # lighting settings for PlotLy objects
@@ -38,11 +39,8 @@ def plot3Dmesh(gt, save_path=""):
             except:
                 print("GT mesh extraction failed")
 
-            # fig.update_layout(title_text="Dice score: {0:.2f}".format(dice))
+            fig.update_layout(title_text="{0} volume: {1:.0f} ml".format(organ_dict[k], volumes[k] / 1000))
             fig.update_xaxes(visible=False, showticklabels=False)
+            fig.write_image(os.path.join(save_path, "{}_{}.png".format(organ_dict[k], subject)))
 
-    # display
-    if save_path == "":
-        fig.show()
-    else:
-        fig.write_image(save_path)
+
