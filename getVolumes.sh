@@ -1,6 +1,6 @@
 #!/bin/bash
-#PBS -l walltime=2:00:00
-#PBS -l select=1:ncpus=12:mem=32gb
+#PBS -l walltime=3:00:00
+#PBS -l select=1:ncpus=15:mem=60gb:ngpus=1:gpu_type=RTX6000
 #PBS -N organ_volumes
 
 cd ${PBS_O_WORKDIR}

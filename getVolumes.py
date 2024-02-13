@@ -4,6 +4,7 @@ import nibabel as nib
 import numpy as np
 import pandas as pd
 import pickle as pkl
+from plottingFunctions import plot3Dmesh
 
 import argparse
 
@@ -69,6 +70,20 @@ def calculate_volumes():
             volumes_all.append(np.array(volumes))
 
             subjects.append(f[5:9])
+
+            if dataset == "AMOS":
+                # ground truth needs to have number of channels reduced
+                input_map = [2, 3, 6, 10]
+                output_map = [1, 2, 3, 4]
+
+                gt_full = gt_nii.get_fdata()
+                gt = np.zeros(gt_full.shape)
+                for q in range(len(input_map)):
+                    gt[gt_full == input_map[q]] = output_map[q]
+
+            # plot the organs as a 3D mesh
+            save_path = os.path.join(root_dir, "volume_plots", "{}.png".format(f[5:9]))
+            plot3Dmesh(gt, save_path)
 
     # Save the volumes ready for further processing
     f = open(os.path.join(root_dir, "volumes.pkl"), "wb")
