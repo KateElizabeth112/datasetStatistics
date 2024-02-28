@@ -116,6 +116,9 @@ def main():
     file_path = os.path.join(output_dir, "cross_dataset", "inference", "text", "dice.txt")
     printCrossDeltas(d1_dice_self, d2_dice_self, d1_dice_cross, d2_dice_cross, organ_dict, "Dice", file_path)
 
+    file_path = os.path.join(output_dir, "cross_dataset", "inference", "text", "hd95.txt")
+    printCrossDeltas(d1_hd95_self, d2_hd95_self, d1_hd95_cross, d2_hd95_cross, organ_dict, "HD95", file_path)
+
 
 if __name__ == "__main__":
     main()

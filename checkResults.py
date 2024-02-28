@@ -9,7 +9,7 @@ import argparse
 
 # argparse
 parser = argparse.ArgumentParser(description="Just an example",  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("-d", "--dataset", default="AMOS_3D", help="Dataset")
+parser.add_argument("-d", "--dataset", default="TotalSegmentator", help="Dataset")
 parser.add_argument("-v", "--variable", default="Age", help="Variable of interest")
 args = vars(parser.parse_args())
 
@@ -183,6 +183,9 @@ def main():
     # Print HD95 gaps
     file_path = os.path.join(output_dir, dataset, variable, "text", "hd95.txt")
     printDeltas(hd95_g1_ex1, hd95_g2_ex1, hd95_g1_ex2, hd95_g2_ex2, hd95_g1_ex3, hd95_g2_ex3, organ_dict, "HD95", file_path, dataset, variable)
+
+    file_path = os.path.join(output_dir, dataset, variable, "text", "hd95_short.txt")
+    printDeltas2(hd95_g1_ex2, hd95_g2_ex2, hd95_g1_ex3, hd95_g2_ex3, organ_dict, "HD95", file_path, dataset, variable)
 
 
     # HD

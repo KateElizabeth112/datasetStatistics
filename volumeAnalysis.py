@@ -1,3 +1,6 @@
+# How does this work?
+# 1. For each dataset and variable, iterate over the five folds of the experiments and build a combined list of
+# training and test ids for group 1 and group 2
 import numpy as np
 import pickle as pkl
 import os
@@ -6,9 +9,6 @@ import matplotlib.pyplot as plt
 
 root_dir = "/Users/katecevora/Documents/PhD/data"
 results_dir = "/Users/katecevora/Documents/PhD/results"
-
-dataset = "TS"
-variable = "Sex"
 
 lblu = "#add9f4"
 lred = "#f36860"
@@ -20,6 +20,13 @@ organ_names = ["left kidney", "right kidney", "liver", "pancreas"]
 colours = [lred, lblu, lgrn, lorg]
 
 def getTrainingAndTestSet(dataset, variable):
+    """
+    Iterates over the five folds of each experiment and builds a list of training IDs and test set IDs for Group 1 and
+    Group 2
+    :param dataset: TS
+    :param variable:
+    :return:
+    """
     # For each experiment, iterate over the folds and recombine training IDs
     combo_train_ids = []
     g1_train_ids = []
@@ -53,6 +60,10 @@ def getTrainingAndTestSet(dataset, variable):
 
 
 def checkVolumes():
+    """
+    Open the volume measurements (for the full dataset) for TotalSegmentator and AMOS and look at the distributions
+    :return:
+    """
     # open one of the volume pickle files
     f = open(os.path.join(root_dir, "TotalSegmentator", "volumes.pkl"), "rb")
     [subjects, volumes1] = pkl.load(f)
@@ -64,14 +75,39 @@ def checkVolumes():
 
     for organ in range(0, 4):
         # calculate mean and standard deviation
-        u1 = np.mean((volumes1[:, organ][volumes1[:, organ] > 0] / 1000))
-        std1 = np.std((volumes1[:, organ][volumes1[:, organ] > 0] / 1000))
-        u2 = np.mean((volumes2[:, organ][volumes2[:, organ] > 0] / 1000))
-        std2 = np.std((volumes2[:, organ][volumes2[:, organ] > 0] / 1000))
+
+        u1 = np.mean((volumes1[:, organ] / 1000))
+        std1 = np.std((volumes1[:, organ] / 1000))
+        u2 = np.mean((volumes2[:, organ]  / 1000))
+        std2 = np.std((volumes2[:, organ] / 1000))
+
+        # calculate the bins
+        # First get the minimum
+        min1 = np.nanmin((volumes1[:, organ] / 1000))
+        min2 = np.nanmin((volumes2[:, organ] / 1000))
+        min = np.nanmin((min1, min2))
+
+        # Then the maximum
+        max1 = np.nanmax((volumes1[:, organ] / 1000))
+        max2 = np.nanmax((volumes2[:, organ] / 1000))
+        max = np.nanmax((max1, max2))
+
+        # Now calculate the bin boundaries
+        bins = np.linspace(min, max, 20)
 
         plt.clf()
-        plt.hist(volumes1[:, organ][volumes1[:, organ] > 0] / 1000, label="u={0:.0f}, std={1:.0f}".format(u1, std1), density=True)
-        plt.hist(volumes2[:, organ][volumes2[:, organ] > 0] / 1000, label="u={0:.0f}, std={1:.0f}".format(u2, std2), density=True)
+        plt.hist(volumes1[:, organ] / 1000,
+                 label="TS u={0:.0f}, std={1:.0f}".format(u1, std1),
+                 density=True,
+                 alpha=0.6,
+                 color=lblu,
+                 bins=bins)
+        plt.hist(volumes2[:, organ] / 1000,
+                 label="AMOS u={0:.0f}, std={1:.0f}".format(u2, std2),
+                 density=True,
+                 alpha=0.6,
+                 color=lred,
+                 bins=bins)
         plt.legend()
         plt.title(organ_names[organ])
         plt.xlabel("milliliters")
@@ -79,6 +115,13 @@ def checkVolumes():
 
 
 def analyseVolumes(dataset, variable):
+    """
+    For each dataset and each variable, use the training and test IDs per group from getTrainAndTestIDs and volumes
+    from the whole dataset to build list of volumes/ids for group 1 and group 2 and store
+    :param dataset:
+    :param variable:
+    :return:
+    """
     # open the volumes
     if dataset == "TS":
         f = open(os.path.join(root_dir, "TotalSegmentator", "volumes.pkl"), "rb")
@@ -246,19 +289,124 @@ def collateResults():
 
     # Automatically adjust subplot parameters to give specified padding
     plt.tight_layout()
-
     plt.show()
 
 
+def getLowVolumeIDs(ds, organ_idx):
+    # Plot GT dice score against volume against dice score in the cross dataset experiment
+    # open the dice scores for TS
+    f = open(os.path.join(root_dir, ds, "inference", "results_combined_cross.pkl"), 'rb')
+    results_cross = pkl.load(f)
+    f.close()
+
+    dice_cross = results_cross["dice"].reshape((-1, np.array(results_cross["dice"]).shape[-1]))[:, organ_idx]
+    vol = results_cross["vol_gt"].reshape((-1, np.array(results_cross["vol_gt"]).shape[-1]))[:, organ_idx] / 1000
+
+    f = open(os.path.join(root_dir, ds, "inference", "results_Age_0.pkl"), 'rb')
+    results_self = pkl.load(f)
+    f.close()
+
+    dice_self = results_self["dice"].reshape((-1, np.array(results_self["dice"]).shape[-1]))[:, organ_idx]
+
+    plt.clf()
+    plt.scatter(vol, dice_cross, label="cross")
+    plt.scatter(vol, dice_self, label="self", marker='x')
+    plt.xlabel("{} Volume (ml)".format(organ_names[organ_idx-1]))
+    plt.ylabel("Dice Score")
+    plt.legend()
+    plt.title(ds)
+    plt.show()
+
+
+def plotVolumes(variable, dataset):
+    if dataset == "TS":
+        input_map = [1, 2, 3, 4]
+        ds_name = "TotalSegmentator"
+    elif dataset == "AMOS":
+        input_map = [2, 3, 6, 10]
+        ds_name = "AMOS_3D"
+
+    if variable == "Age":
+        group1 = "Under 50"
+        group2 = "Over 70"
+        colours = [lgrn, lorg]
+        print("Variable is age.")
+    elif variable == "Sex":
+        group1 = "Female"
+        group2 = "Male"
+        colours = [lred, lblu]
+        print("Variable is sex.")
+
+    # open the volumes
+    f = open(os.path.join(results_dir, "ids_and_volumes_{}_{}.pkl".format(dataset, variable)), "rb")
+    results_dict = pkl.load(f)
+    f.close()
+
+    volumes_g1 = results_dict["g1_volumes"]
+    volumes_g2 = results_dict["g2_volumes"]
+
+    plt.clf()
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(8, 6))
+    plt.subplots_adjust(hspace=0.5)
+    ax1, ax2, ax3, ax4 = axes.flatten()
+
+    axes = [ax1, ax2, ax3, ax4]
+
+    for i in range(0, 4):
+        # calculate mean and standard deviation
+        u1 = np.mean((volumes_g1[:, i] / 1000))
+        std1 = np.std((volumes_g1[:, i] / 1000))
+        u2 = np.mean((volumes_g2[:, i] / 1000))
+        std2 = np.std((volumes_g2[:, i] / 1000))
+
+        # calculate the bins
+        # First get the minimum
+        min1 = np.nanmin((volumes_g1[:, i] / 1000))
+        min2 = np.nanmin((volumes_g2[:, i] / 1000))
+        min = np.nanmin((min1, min2))
+
+        # Then the maximum
+        max1 = np.nanmax((volumes_g1[:, i] / 1000))
+        max2 = np.nanmax((volumes_g2[:, i] / 1000))
+        max = np.nanmax((max1, max2))
+
+        # Now calculate the bin boundaries
+        bins = np.linspace(min, max, 20)
+
+        axes[i].hist(volumes_g1[:, i] / 1000,
+                 label="{0}, u={1:.0f}, std={2:.0f}".format(group1, u1, std1),
+                 density=True,
+                 alpha=0.6,
+                 color=colours[0],
+                 bins=bins)
+        axes[i].hist(volumes_g2[:, i] / 1000,
+                 label="{0}, u={1:.0f}, std={2:.0f}".format(group2, u2, std2),
+                 density=True,
+                 alpha=0.6,
+                 color=colours[1],
+                 bins=bins)
+        axes[i].legend()
+        axes[i].set_title(organ_names[i])
+        axes[i].set_xlabel("milliliters")
+
+    plt.tight_layout()
+    fig.suptitle("{}".format(dataset))
+    plt.savefig(os.path.join("/Users/katecevora/Documents/PhD/", "results", "datasets", "{}_{}_volume_histogram.png".format(dataset, variable)))
+
+
 def main():
+    #checkVolumes()
     #for dataset in ["TS", "AMOS"]:
     #    for variable in ["Age", "Sex"]:
     #        getTrainingAndTestSet(dataset, variable)
     #        analyseVolumes(dataset, variable)
 
-    collateResults()
-
-
+    #collateResults()
+    #getLowVolumeIDs("AMOS_3D", 3)
+    plotVolumes("Sex", "TS")
+    plotVolumes("Age", "TS")
+    plotVolumes("Sex", "AMOS")
+    plotVolumes("Age", "AMOS")
 
 
 if __name__ == "__main__":
