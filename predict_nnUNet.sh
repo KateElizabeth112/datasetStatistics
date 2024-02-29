@@ -29,7 +29,7 @@ DATASET="TotalSegmentator"
 #              "Dataset800_Fold3" "Dataset801_Fold3" "Dataset802_Fold3"
 #              "Dataset900_Fold4" "Dataset901_Fold4" "Dataset902_Fold4")
 
-experiments=("Dataset000_Sex0", "Dataset001_Sex0", "Dataset200_Sex2", "Dataset300_Sex3", "Dataset301_Sex3")
+experiments=("Dataset000_Sex0" "Dataset001_Sex0" "Dataset200_Sex2" "Dataset300_Sex3" "Dataset301_Sex3")
 
 export nnUNet_raw=$ROOT_DIR"nnUNet_raw"
 export nnUNet_preprocessed=$ROOT_DIR"nnUNet_preprocessed"
