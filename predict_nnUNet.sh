@@ -57,4 +57,4 @@ for number in {0..4}; do
 done
 
 # set variable to Sex or Age
-python3 combineFolds.py -r $ROOT_DIR -v "Sex"
+#python3 combineFolds.py -r $ROOT_DIR -v "Sex"
