@@ -29,7 +29,7 @@ DATASET="TotalSegmentator"
 #              "Dataset800_Fold3" "Dataset801_Fold3" "Dataset802_Fold3"
 #              "Dataset900_Fold4" "Dataset901_Fold4" "Dataset902_Fold4")
 
-experiments=("Dataset000_Sex0" "Dataset001_Sex0" "Dataset200_Sex2" "Dataset300_Sex3" "Dataset301_Sex3")
+experiments=("Dataset000_Sex0" "Dataset001_Sex0" "Dataset100_Sex1" "Dataset101_Sex1" "Dataset200_Sex2")
 
 export nnUNet_raw=$ROOT_DIR"nnUNet_raw"
 export nnUNet_preprocessed=$ROOT_DIR"nnUNet_preprocessed"
@@ -40,11 +40,10 @@ for number in {0..4}; do
     TASK=${EXPERIMENT:7:3}
 
     # Inference
-    INPUT_FOLDER=$ROOT_DIR"nnUNet_raw/"$DATASET"/imagesTs"
-    OUTPUT_FOLDER=$ROOT_DIR"inference/"$DATASET"/all"
+    INPUT_FOLDER=$ROOT_DIR"nnUNet_raw/"$EXPERIMENT"/imagesTs"
+    OUTPUT_FOLDER=$ROOT_DIR"inference/"$EXPERIMENT"/all"
 
     echo $TASK
-    echo $DATASET
     echo $EXPERIMENT
     echo $INPUT_FOLDER
     echo $OUTPUT_FOLDER
