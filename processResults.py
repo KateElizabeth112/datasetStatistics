@@ -50,7 +50,7 @@ elif dataset == "TotalSegmentator":
               "left kidney": 2,
               "liver": 3,
               "pancreas": 4}
-    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset300_Full", "labelsTr")
+    gt_dir = os.path.join(root_dir, "nnUNet_raw", "Dataset999_Full", "labelsTr")
 else:
     print("Dataset not recognised")
 

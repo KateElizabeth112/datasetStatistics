@@ -1,7 +1,7 @@
 #!/bin/bash
-#PBS -l walltime=6:00:00
+#PBS -l walltime=8:00:00
 #PBS -l select=1:ncpus=15:mem=120gb:ngpus=1:gpu_type=RTX6000
-#PBS -N predict_TS_sex
+#PBS -N predict_TS_sex_pt2
 
 cd ${PBS_O_WORKDIR}
 
@@ -29,7 +29,8 @@ DATASET="TotalSegmentator"
 #              "Dataset800_Fold3" "Dataset801_Fold3" "Dataset802_Fold3"
 #              "Dataset900_Fold4" "Dataset901_Fold4" "Dataset902_Fold4")
 
-experiments=("Dataset000_Sex0" "Dataset001_Sex0" "Dataset100_Sex1" "Dataset101_Sex1" "Dataset200_Sex2")
+#experiments=("Dataset000_Sex0" "Dataset001_Sex0" "Dataset100_Sex1" "Dataset101_Sex1" "Dataset200_Sex2")
+experiments=("Dataset201_Sex2" "Dataset300_Sex3" "Dataset301_Sex3" "Dataset400_Sex4" "Dataset401_Sex4")
 
 export nnUNet_raw=$ROOT_DIR"nnUNet_raw"
 export nnUNet_preprocessed=$ROOT_DIR"nnUNet_preprocessed"
@@ -44,6 +45,7 @@ for number in {0..4}; do
     OUTPUT_FOLDER=$ROOT_DIR"inference/"$EXPERIMENT"/all"
 
     echo $TASK
+    echo $DATASET
     echo $EXPERIMENT
     echo $INPUT_FOLDER
     echo $OUTPUT_FOLDER
