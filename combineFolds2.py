@@ -19,7 +19,7 @@ folds = [0, 1, 2, 3, 4]
 if variable == "Age":
     s = "Age"
 elif variable == "Sex":
-    s = "Fold"
+    s = "Sex"
 else:
     print("Variable {} not recognised".format(variable))
 
