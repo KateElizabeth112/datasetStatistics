@@ -12,4 +12,6 @@ source activate nnUNetv2
 #ROOT_DIR='/rds/general/user/kc2322/home/data/AMOS_3D/'
 ROOT_DIR='/rds/general/user/kc2322/projects/cevora_phd/live/TotalSegmentator/'
 
-python3 combineFolds.py -r $ROOT_DIR -v "Age"
+#python3 combineFolds.py -r $ROOT_DIR -v "Age"
+
+python3 combineFolds.py -r $ROOT_DIR -v "Sex"
