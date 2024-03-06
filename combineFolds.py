@@ -37,7 +37,7 @@ def main():
 
         # iterate over folds and combine
         for fold in folds:
-            ds = "Dataset{}0{}_{}{}".format(5 + fold, ex, s, fold)
+            ds = "Dataset{}0{}_{}{}".format(5 + fold, ex+1, s, fold)
             f = open(os.path.join(root_dir, "inference", ds, "all", "results.pkl"), "rb")
             results = pkl.load(f)
             f.close()
