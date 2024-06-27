@@ -3,7 +3,7 @@ import numpy as np
 import pickle as pkl
 import os
 from plotResults import plotDualDistribution, plotVolumeDistribution
-from printResults import printCrossDeltas, printVolumes
+from printResults import printCrossDeltas, printVolumes, printCrossDice
 
 root_dir = "/Users/katecevora/Documents/PhD/data"
 output_dir = "/Users/katecevora/Documents/PhD/results"
@@ -26,6 +26,16 @@ organ_dict = {"background": 0,
 
 
 def main():
+    # Create folder structure for saving results
+    if not os.path.exists(os.path.join(output_dir, "cross_dataset")):
+        os.mkdir(os.path.join(output_dir, "cross_dataset"))
+
+    if not os.path.exists(os.path.join(output_dir, "cross_dataset", "plots")):
+        os.mkdir(os.path.join(output_dir, "cross_dataset", "plots"))
+
+    if not os.path.exists(os.path.join(output_dir, "cross_dataset", "text")):
+        os.mkdir(os.path.join(output_dir, "cross_dataset", "text"))
+
     # open predictions for the first dataset from a model trained on the second dataset
     f = open(os.path.join(root_dir, dataset1, "inference", "results_combined_cross.pkl"), 'rb')
     results_cross = pkl.load(f)
@@ -53,15 +63,15 @@ def main():
     d1_vol_gt = results_self["vol_gt"].reshape((-1, np.array(results_self["vol_gt"]).shape[-1]))
 
     # D1 DICE
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots", "{}_dice.png".format(test_ds1))
+    save_path = os.path.join(output_dir, "cross_dataset", "plots", "{}_dice.png".format(test_ds1))
     plotDualDistribution(d1_dice_self, d1_dice_cross, "Self", "Cross", "Dice Score", organ_dict, save_path)
 
     # D1 HD
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots", "{}_hd.png".format(test_ds1))
+    save_path = os.path.join(output_dir, "cross_dataset", "plots", "{}_hd.png".format(test_ds1))
     plotDualDistribution(d1_hd_self, d1_hd_cross, "Self", "Cross", "HD", organ_dict, save_path)
 
     # D1 HD95
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots", "{}_hd95.png".format(test_ds1))
+    save_path = os.path.join(output_dir, "cross_dataset", "plots", "{}_hd95.png".format(test_ds1))
     plotDualDistribution(d1_hd95_self, d1_hd95_cross, "Self", "Cross", "HD95", organ_dict, save_path)
 
     # DS2
@@ -91,33 +101,38 @@ def main():
     d2_vol_gt = results_self["vol_gt"].reshape((-1, np.array(results_self["vol_gt"]).shape[-1]))
 
     # D2 DICE
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots", "{}_dice.png".format(test_ds2))
+    save_path = os.path.join(output_dir, "cross_dataset", "plots", "{}_dice.png".format(test_ds2))
     plotDualDistribution(d2_dice_self, d2_dice_cross, "Self", "Cross", "Dice Score", organ_dict, save_path)
 
     # D2 HD
 
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots", "{}_hd.png".format(test_ds2))
+    save_path = os.path.join(output_dir, "cross_dataset","plots", "{}_hd.png".format(test_ds2))
     plotDualDistribution(d2_hd_self, d2_hd_cross, "Self", "Cross", "HD", organ_dict, save_path)
 
     # D2 HD95
 
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots", "{}_hd.png".format(test_ds2))
+    save_path = os.path.join(output_dir, "cross_dataset","plots", "{}_hd.png".format(test_ds2))
     plotDualDistribution(d2_hd95_self, d2_hd95_cross, "Self", "Cross", "HD95", organ_dict, save_path)
 
 
     # VOLUME
-    save_path = os.path.join(output_dir, "cross_dataset", "inference", "plots")
+    save_path = os.path.join(output_dir, "cross_dataset", "plots")
     plotVolumeDistribution(d1_vol_gt, d2_vol_gt, "TS", "AMOS", organ_dict, save_path)
 
-    file_path = os.path.join(output_dir, "cross_dataset", "inference", "text", "volume.txt")
+    file_path = os.path.join(output_dir, "cross_dataset", "text", "volume.txt")
     printVolumes(d1_vol_gt, d2_vol_gt, organ_dict, file_path)
 
     # CROSS DATASET
-    file_path = os.path.join(output_dir, "cross_dataset", "inference", "text", "dice.txt")
+    file_path = os.path.join(output_dir, "cross_dataset", "text", "dice_gap.txt")
     printCrossDeltas(d1_dice_self, d2_dice_self, d1_dice_cross, d2_dice_cross, organ_dict, "Dice", file_path)
 
-    file_path = os.path.join(output_dir, "cross_dataset", "inference", "text", "hd95.txt")
+    file_path = os.path.join(output_dir, "cross_dataset", "text", "dice_raw.txt")
+    printCrossDice(d1_dice_self, d2_dice_self, d1_dice_cross, d2_dice_cross, organ_dict, "Dice", file_path)
+
+    file_path = os.path.join(output_dir, "cross_dataset", "text", "hd95_gap.txt")
     printCrossDeltas(d1_hd95_self, d2_hd95_self, d1_hd95_cross, d2_hd95_cross, organ_dict, "HD95", file_path)
+
+
 
 
 if __name__ == "__main__":
