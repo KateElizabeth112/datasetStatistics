@@ -8,10 +8,12 @@ import argparse
 parser = argparse.ArgumentParser(description="Just an example",  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-r", "--rootdir", default="/rds/general/user/kc2322/home/data/AMOS_3D", help="full path to root directory")
 parser.add_argument("-v", "--variable", default="Age", help="Variable of interest.")
+parser.add_argument("-d", "--dataset", default="TS")
 args = vars(parser.parse_args())
 
 root_dir = args["rootdir"]
 variable = args["variable"]
+dataset = args["dataset"]
 
 folds = [0, 1, 2, 3, 4]
 
@@ -37,7 +39,10 @@ def main():
 
         # iterate over folds and combine
         for fold in folds:
-            ds = "Dataset{}0{}_{}{}".format(5 + fold, ex+1, s, fold)
+            if dataset == "TS":
+                ds = "Dataset{}0{}_{}{}".format(5 + fold, ex+1, s, fold)
+            else:
+                ds = "Dataset{}0{}_{}{}".format(5 + fold, ex, s, fold)
             f = open(os.path.join(root_dir, "inference", ds, "all", "results.pkl"), "rb")
             results = pkl.load(f)
             f.close()

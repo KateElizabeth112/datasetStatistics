@@ -1,8 +1,9 @@
+# Takes predictions from a given experiment and calculates metrics such as Dice and HD95
+# saves results separately for every fold
 import numpy as np
 import nibabel as nib
 import os
 import pickle as pkl
-
 import pandas as pd
 from monai.metrics import compute_hausdorff_distance
 import argparse

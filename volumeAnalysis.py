@@ -594,22 +594,165 @@ def plotDiversityAgainstDice(variable):
         dice_mean_g1.append(dice_g1_ex3_mean)
         dice_mean_g2.append(dice_g2_ex3_mean)
 
+    volume_std = np.array(volume_std)
+    dice_mean_g1 = np.array(dice_mean_g1)
+    dice_mean_g2 = np.array(dice_mean_g2)
     # plot
     plt.clf()
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(8, 8))
     ax1, ax2, ax3, ax4 = axes.flatten()
     axes = [ax1, ax2, ax3, ax4]
 
-    for organ in range(0, 4):
-        axes[organ].scatter(volume_std[:, organ], dice_mean_g1[:, organ], label=label_g1, color=colours[0])
-        axes[organ].scatter(volume_std[:, organ], dice_mean_g2[:, organ], label=label_g2, color=colours[1])
-        axes[organ].legend(loc='upper right')
-        axes[organ].set_ylabel("Average Dice (Test Set)")
-        axes[organ].set_xlabel("Volume Standard Deviation (ml)")
+    for o in range(0, 4):
+        axes[o].scatter(volume_std[:, o], dice_mean_g1[:, o], label=label_g1, color=colours[0])
+        axes[o].scatter(volume_std[:, o], dice_mean_g2[:, o], label=label_g2, color=colours[1])
+        axes[o].legend(loc='upper right')
+        axes[o].set_ylabel("Average Dice (Test Set)")
+        axes[o].set_xlabel("Volume Standard Deviation (ml)")
+        axes[o].set_title(organ_names[o])
 
     # Adjust space between subplots
     plt.subplots_adjust(hspace=0.5)  # Adjust horizontal space
 
+    # Automatically adjust subplot parameters to give specified padding
+    plt.tight_layout()
+    plt.show()
+
+def plotAnotherThing():
+    """
+    For each organ, plot the volume standard deviation for the training set against the average dice score for the test
+    set.
+    We assume that the larger the standard deviation for the training set (implying greater diversity) the better the
+    score on the test set.
+    :return:
+    """
+    # plot
+    plt.clf()
+    fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(8, 4))
+    #ax1, ax2, ax3, ax4 = axes.flatten()
+    #axes = [ax1, ax2, ax3, ax4]
+
+    for dataset, k in zip(["TS", "AMOS"], [0,1]):
+        for variable in ["Sex", "Age"]:
+            volume_std = []
+            dice_mean_g1 = []
+            dice_mean_g2 = []
+
+            if dataset == "TS":
+                input_map = [1, 2, 3, 4]
+                ds_name = "TotalSegmentator"
+                if variable == "Sex":
+                    label_g1 = "Female"
+                    label_g2 = "Male"
+                    c = [lred, lblu]
+                elif variable == "Age":
+                    label_g1 = "Under 50"
+                    label_g2 = "Over 70"
+                    age_1 = 50
+                    age_2 = 70
+                    c = [lgrn, lorg]
+            elif dataset == "AMOS":
+                input_map = [2, 3, 6, 10]
+                ds_name = "AMOS_3D"
+                if variable == "Sex":
+                    label_g1 = "Female"
+                    label_g2 = "Male"
+                    c = [lred, lblu]
+                elif variable == "Age":
+                    label_g1 = "Under 50"
+                    label_g2 = "Over 70"
+                    age_1 = 40
+                    age_2 = 65
+                    c = [lgrn, lorg]
+
+            # open the volumes
+            f = open(os.path.join(results_dir, "ids_and_volumes_{}_{}.pkl".format(dataset, variable)), "rb")
+            results_dict = pkl.load(f)
+            f.close()
+
+            volumes_g1 = results_dict["g1_volumes"]
+            volumes_g2 = results_dict["g2_volumes"]
+
+            # open the dice scores
+            f = open(os.path.join(root_dir, ds_name, "inference", "results_{}_1.pkl".format(variable)), 'rb')
+            results_ex2 = pkl.load(f)
+            f.close()
+
+            sex = results_ex2["sex"].flatten()
+            age = results_ex2["age"].flatten()
+
+            dice_ex2 = results_ex2["dice"].reshape((-1, np.array(results_ex2["dice"]).shape[-1]))[:, input_map]
+
+            f = open(os.path.join(root_dir, ds_name, "inference", "results_{}_2.pkl".format(variable)), 'rb')
+            results_ex3 = pkl.load(f)
+            f.close()
+
+            dice_ex3 = results_ex3["dice"].reshape((-1, np.array(results_ex3["dice"]).shape[-1]))[:, input_map]
+
+            # split the dice scores by group
+            # sort by characteristic of interest
+            if variable == "Age":
+                dice_g1_ex2 = dice_ex2[age <= age_1, :]
+                dice_g2_ex2 = dice_ex2[age >= age_2, :]
+                dice_g1_ex3 = dice_ex3[age <= age_1, :]
+                dice_g2_ex3 = dice_ex3[age >= age_2, :]
+            elif variable == "Sex":
+                dice_g1_ex2 = dice_ex2[sex == 1, :]
+                dice_g2_ex2 = dice_ex2[sex == 0, :]
+                dice_g1_ex3 = dice_ex3[sex == 1, :]
+                dice_g2_ex3 = dice_ex3[sex == 0, :]
+
+            # calculates means for Dice and mean and std for volume
+            dice_g1_ex2_mean = np.nanmean(dice_g1_ex2, axis=0)
+            dice_g2_ex2_mean = np.nanmean(dice_g2_ex2, axis=0)
+
+            dice_g1_ex3_mean = np.nanmean(dice_g1_ex3, axis=0)
+            dice_g2_ex3_mean = np.nanmean(dice_g2_ex3, axis=0)
+
+            volumes_g1_mean = np.mean(volumes_g1, axis=0) / 1000
+            volumes_g2_mean = np.mean(volumes_g2, axis=0) / 1000
+
+            volumes_g1_std = np.std(volumes_g1, axis=0) / 1000
+            volumes_g2_std = np.std(volumes_g2, axis=0) / 1000
+
+            # Experiment 1 (train with g1)
+            volume_std.append(volumes_g1_std)
+            dice_mean_g1.append(dice_g1_ex2_mean)
+            dice_mean_g2.append(dice_g2_ex2_mean)
+
+            # Experiment 2 (train with g2)
+            volume_std.append(volumes_g2_std)
+            dice_mean_g1.append(dice_g1_ex3_mean)
+            dice_mean_g2.append(dice_g2_ex3_mean)
+
+            volume_std = np.array(volume_std)
+            dice_mean_g1 = np.array(dice_mean_g1)
+            dice_mean_g2 = np.array(dice_mean_g2)
+
+            for o in range(0, 4):
+                #if o == 3:
+                #    axes[k, o].set_ylim(0.8, 0.9)
+                #else:
+                #    axes[k, o].set_ylim(0.91, 0.99)
+                axes[k, o].scatter(volume_std[:, o], dice_mean_g1[:, o], label=label_g1, color=c[0])
+                axes[k, o].plot(volume_std[:, o], dice_mean_g1[:, o], color=c[0])
+                axes[k, o].scatter(volume_std[:, o], dice_mean_g2[:, o], label=label_g2, color=c[1])
+                axes[k, o].plot(volume_std[:, o], dice_mean_g2[:, o], color=c[1])
+                #axes[k, o].set_yticks([])
+                #axes[k, o].set_yticklabels([])
+
+                #axes[o].legend(loc='upper right')
+                #axes[o].set_ylabel("Average Dice (Test Set)")
+                #axes[o].set_xlabel("Volume Standard Deviation (ml)")
+                if k == 0:
+                    axes[k, o].set_title(organ_names[o])
+                if k == 1 and o == 3:
+                    axes[k, o].legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=2)
+
+    # Adjust space between subplots
+    #plt.subplots_adjust(hspace=0.1)  # Adjust horizontal space
+    fig.supxlabel("Training Set Volume Standard Deviation (ml)")
+    fig.supylabel("Test Set Average Dice")
     # Automatically adjust subplot parameters to give specified padding
     plt.tight_layout()
     plt.show()
@@ -624,7 +767,8 @@ def main():
 
     #plotVolStdGapAgainstDiceGap()
     #plotVolStdAgainstDice()
-    plotDiversityAgainstDice("Sex")
+    #plotDiversityAgainstDice("Age")
+    plotAnotherThing()
     #getLowVolumeIDs("AMOS_3D", 3)
     #plotVolumes("Sex", "TS")
     #plotVolumes("Age", "TS")

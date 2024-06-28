@@ -3,6 +3,8 @@
 #PBS -l select=1:ncpus=15:mem=120gb:ngpus=1:gpu_type=RTX6000
 #PBS -N predict_TS_sex_pt1
 
+# make predictions with trained nnUNet model and calculate corresponding metrics like Dice and HD for each fold.
+
 cd ${PBS_O_WORKDIR}
 
 # Launch virtual environment
@@ -53,7 +55,7 @@ for number in {0..4}; do
     #nnUNetv2_predict -i $INPUT_FOLDER -o $OUTPUT_FOLDER -d $TASK -c 3d_fullres -f all -chk checkpoint_best.pth
 
     # Run python script to evaluate results
-    python3 processResults.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
+    python3 calculateMetrics.py -d $DATASET -e $EXPERIMENT -r $ROOT_DIR
 
 done
 
